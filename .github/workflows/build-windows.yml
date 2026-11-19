@@ -1,0 +1,38 @@
+name: Windows EXE oluştur
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "chatgpt_fotograf_toplu_indir.py"
+      - ".github/workflows/build-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: PyInstaller kur
+        run: python -m pip install --upgrade pip pyinstaller
+
+      - name: EXE oluştur
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name ChatGPT_Fotograf_Toplu_Indir chatgpt_fotograf_toplu_indir.py
+
+      - name: EXE dosyasını yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChatGPT-Fotograf-Toplu-Indir-Windows
+          path: dist/ChatGPT_Fotograf_Toplu_Indir.exe
+          if-no-files-found: error
+          retention-days: 30
